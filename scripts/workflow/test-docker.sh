@@ -9,7 +9,7 @@ echo -e "${GREEN}Starting Docker test script...${NC}"
 
 # Build the Docker image
 echo -e "${GREEN}Building Docker image...${NC}"
-docker build -t inspectify-backend-nestJS .
+docker build -t inspectify-backend-nestjs .
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Docker image built successfully!${NC}"
@@ -20,12 +20,12 @@ fi
 
 # Stop any existing container with the same name
 echo -e "${GREEN}Cleaning up any existing containers...${NC}"
-docker stop inspectify-backend-nestJS-container 2>/dev/null || true
-docker rm inspectify-backend-nestJS-container 2>/dev/null || true
+docker stop inspectify-backend-nestjs-container 2>/dev/null || true
+docker rm inspectify-backend-nestjs-container 2>/dev/null || true
 
 # Run the container
 echo -e "${GREEN}Starting the container...${NC}"
-docker run -d --name inspectify-backend-nestJS-container -p 3001:3001 inspectify-backend-nestJS
+docker run -d --name inspectify-backend-nestjs-container -p 3001:3001 inspectify-backend-nestjs
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Container started successfully!${NC}"
@@ -47,9 +47,9 @@ if [ "$response" = "200" ]; then
 else
     echo -e "${RED}Server test failed! Response code: $response${NC}"
     echo -e "${GREEN}Checking container logs...${NC}"
-    docker logs inspectify-backend-nestJS-container
+    docker logs inspectify-backend-nestjs-container
     exit 1
 fi
 
 echo -e "${GREEN}All tests completed successfully!${NC}"
-echo -e "${GREEN}To stop the container, run: docker stop inspectify-backend-nestJS-container${NC}"
+echo -e "${GREEN}To stop the container, run: docker stop inspectify-backend-nestjs-container${NC}"

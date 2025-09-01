@@ -6,9 +6,11 @@ WORKDIR /app
 # Install build dependencies for native modules
 RUN apk add --no-cache python3 make g++
 
-# Install dependencies using Yarn
+# Copy dependency files, Prisma schema, and scripts before install
 COPY package.json ./
 COPY yarn.lock ./
+COPY prisma ./prisma
+COPY scripts ./scripts
 RUN yarn install --frozen-lockfile
 
 # Copy source files
@@ -26,9 +28,6 @@ COPY --from=builder /app/package.json ./
 COPY --from=builder /app/yarn.lock ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-
-# Expose port (Railway uses PORT env variable)
-EXPOSE 3001
 
 # Start the app
 CMD ["node", "dist/main.js"]
