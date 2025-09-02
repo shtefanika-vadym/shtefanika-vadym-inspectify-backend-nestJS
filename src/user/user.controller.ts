@@ -21,12 +21,14 @@ import {
 } from '@nestjs/swagger'
 
 import type { Template } from 'generated/prisma'
+
+import type { SuccessResponseType } from '@/common/types/success-response.type'
+
 import { CreateUserDto, UserResponseType } from '@/user/dto/create-user.dto'
+import { TemplateResponseDto } from '@/user/dto/template-response.dto'
 import { UploadTemplateDto } from '@/user/dto/upload-template.dto'
 import { User } from '@/user/user.decorator'
 import { UserService } from '@/user/user.service'
-import { TemplateResponseDto } from 'src/user/dto/template-response.dto'
-import { SuccessResponseType } from '@/common/types/success-response.type'
 
 @UseGuards(AuthGuard())
 @ApiTags('users')

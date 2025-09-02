@@ -3,15 +3,12 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install build dependencies for native modules
-RUN apk add --no-cache python3 make g++
-
 # Copy dependency files, Prisma schema, and scripts before install
 COPY package.json ./
 COPY yarn.lock ./
 COPY prisma ./prisma
 COPY scripts ./scripts
-RUN yarn install --frozen-lockfile
+RUN yarn install
 
 # Copy source files
 COPY . .
@@ -23,7 +20,6 @@ RUN yarn build
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Copy only necessary files from builder
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/yarn.lock ./
 COPY --from=builder /app/dist ./dist

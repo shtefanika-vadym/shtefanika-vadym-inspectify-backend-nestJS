@@ -8,6 +8,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "postbuild": "cp -r generated dist/ && tsc-alias",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start:dev": "dotenv -e env/local.env -- nest start --watch",
     "start:debug": "dotenv -e env/local.env -- nest start --debug --watch",
@@ -44,7 +45,7 @@
     "@nestjs/swagger": "^11.1.2",
     "@nestjs/throttler": "^6.4.0",
     "@prisma/client": "^6.6.0",
-    "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "csv-parse": "^6.1.0",
     "dotenv": "^16.5.0",
     "dotenv-cli": "^8.0.0",
@@ -93,6 +94,7 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
+    "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.1.3"
   },
