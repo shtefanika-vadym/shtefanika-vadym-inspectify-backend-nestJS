@@ -7,6 +7,9 @@ NC='\033[0m' # No Color
 
 echo -e "${GREEN}Starting Docker test script...${NC}"
 
+# Navigate to the project root directory
+cd ../../
+
 # Build the Docker image
 echo -e "${GREEN}Building Docker image...${NC}"
 docker build -t inspectify-backend-nestjs .
