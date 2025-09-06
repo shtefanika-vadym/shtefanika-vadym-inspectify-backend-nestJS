@@ -19,6 +19,12 @@ async function bootstrap() {
     defaultVersion: '1',
   })
 
+  app.enableCors({
+    origin: '*',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: '*',
+  })
+
   app.use(requestIp.mw())
 
   // Middleware against known security vulnerabilities
