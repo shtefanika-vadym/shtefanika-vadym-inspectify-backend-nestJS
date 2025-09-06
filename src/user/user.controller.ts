@@ -64,15 +64,21 @@ export class UserController {
           type: 'string',
           format: 'binary',
         },
+        name: {
+          type: 'string',
+          description: 'Name of the template',
+        },
       },
+      required: ['file', 'name'],
     },
   })
   @UseInterceptors(FileInterceptor('file'))
   async uploadTemplate(
     @User() user: UserResponseType,
     @UploadedFile() file: UploadTemplateDto,
+    @Param('name') name: string,
   ): Promise<Template> {
-    return this.userService.uploadTemplate(user.id, file)
+    return this.userService.uploadTemplate(user.id, file, name)
   }
 
   @Get('templates')

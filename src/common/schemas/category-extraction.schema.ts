@@ -15,9 +15,23 @@ export const CategoryExtractionSchema = {
             },
             questions: {
               type: 'array',
-              description: 'Lista completă a întrebărilor din secțiune',
+              description: 'Lista completă a întrebărilor din secțiune, fiecare cu text și tip',
               items: {
-                type: 'string',
+                type: 'object',
+                properties: {
+                  question: {
+                    type: 'string',
+                    description: 'Textul exact al întrebării în limba română',
+                  },
+                  type: {
+                    type: 'string',
+                    enum: ['boolean', 'number', 'input'],
+                    description:
+                      'Tipul câmpului pentru UI: implicit boolean, number dacă întrebarea cere număr, input dacă răspunsul trebuie scris liber',
+                  },
+                },
+                required: ['question', 'type'],
+                additionalProperties: false,
               },
             },
           },

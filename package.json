@@ -20,6 +20,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migrate:dev": "dotenv -e env/local.env -- prisma migrate dev --preview-feature",
+    "migrate:prod": "dotenv -e env/production.env -- prisma migrate dev --preview-feature",
     "migrate:dev:create": "dotenv -e env/local.env -- prisma migrate dev --create-only --preview-feature",
     "migrate:dev:pull": "dotenv -e env/local.env -- prisma db pull",
     "migrate:reset": "dotenv -e env/local.env -- prisma migrate reset --preview-feature",

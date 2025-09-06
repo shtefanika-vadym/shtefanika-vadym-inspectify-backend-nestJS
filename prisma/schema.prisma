@@ -43,6 +43,8 @@ model Template {
   createdAt       DateTime       @default(now()) @map("created_at")
   updatedAt       DateTime       @updatedAt @map("updated_at")
   md5Hash         String         @map("md5_hash")
+  name            String         @map("name")
+  deletedAt       DateTime?      @map("deleted_at")
 
   user User @relation(fields: [userId], references: [id])
 

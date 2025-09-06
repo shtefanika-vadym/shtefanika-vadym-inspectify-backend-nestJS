@@ -31,24 +31,26 @@ export class UserService {
     })
   }
 
-  private uploadR2TemplateFile(userId: string, file: UploadTemplateDto): Promise<string> {
-    const fileExtension = this.fileReadService.getFileExtension(file.originalname)
-
-    const key = `${userId}/${Date.now()}.${fileExtension}`
-    return this.r2Service.uploadFile(key, file.buffer, 'templates')
-  }
-
-  public async uploadTemplate(userId: string, file: UploadTemplateDto): Promise<Template> {
-    const fileUrl = await this.uploadR2TemplateFile(userId, file)
+  public async uploadTemplate(
+    userId: string,
+    file: UploadTemplateDto,
+    name: string,
+  ): Promise<Template> {
+    const fileUrl = await this.r2Service.uploadFile(
+      userId,
+      file as Express.Multer.File,
+      'templates',
+    )
 
     // Check for existing template with same md5Hash
-    const duplicatedTemplate = await this.duplicateTemplateIfExists(userId, file, fileUrl)
+    const duplicatedTemplate = await this.duplicateTemplateIfExists(userId, file, fileUrl, name)
     if (duplicatedTemplate) return duplicatedTemplate
 
     const template: Template = await this.prisma.template.create({
       data: {
         userId,
         fileUrl,
+        name: name,
         categories: [],
         status: TemplateStatus.processing,
         md5Hash: this.md5Service.toMd5(file.buffer),
@@ -66,6 +68,7 @@ export class UserService {
     userId: string,
     file: UploadTemplateDto,
     fileUrl: string,
+    name: string,
   ): Promise<Template | null> {
     const md5Hash = this.md5Service.toMd5(file.buffer)
     const existing = await this.prisma.template.findFirst({
@@ -77,6 +80,7 @@ export class UserService {
     // Duplicate categories/status from existing template
     return this.prisma.template.create({
       data: {
+        name,
         userId,
         fileUrl,
         md5Hash,
@@ -111,7 +115,7 @@ export class UserService {
 
   public async getUserTemplates(userId: string): Promise<TemplateResponseDto[]> {
     const templates = await this.prisma.template.findMany({
-      where: { userId },
+      where: { userId, deletedAt: null },
       orderBy: { createdAt: 'desc' },
       omit: { templateContent: true },
     })
@@ -124,8 +128,9 @@ export class UserService {
     })
     if (!template || template.userId !== userId) throw new NotFoundException('Template not found')
 
-    await this.prisma.template.delete({
+    await this.prisma.template.update({
       where: { id: templateId },
+      data: { deletedAt: new Date() },
     })
 
     return { success: true }

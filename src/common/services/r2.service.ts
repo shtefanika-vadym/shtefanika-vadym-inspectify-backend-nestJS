@@ -1,10 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 
-import { S3Client, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3'
+import {
+  S3Client,
+  GetObjectCommand,
+  PutObjectCommand,
+  DeleteObjectCommand,
+} from '@aws-sdk/client-s3'
 import type { Readable } from 'stream'
 
-export type BucketType = 'templates' | 'reports'
+export type BucketType = 'templates' | 'reports' | 'images'
 
 @Injectable()
 export class R2Service {
@@ -25,6 +30,11 @@ export class R2Service {
     })
   }
 
+  private getFileExtension(filename: string): string {
+    const parts = filename.split('.')
+    return parts.length > 1 ? parts.pop().toLowerCase() : ''
+  }
+
   async getFile(key: string, bucket: BucketType): Promise<Buffer> {
     const command = new GetObjectCommand({
       Key: key,
@@ -39,13 +49,24 @@ export class R2Service {
     return Buffer.concat(chunks)
   }
 
-  async uploadFile(key: string, file: Buffer, bucket: BucketType): Promise<string> {
+  async uploadFile(userId: string, file: Express.Multer.File, bucket: BucketType): Promise<string> {
+    const fileExtension = this.getFileExtension(file.originalname)
+    const key = `${userId}/${Date.now()}.${fileExtension}`
+
     const command = new PutObjectCommand({
       Key: key,
-      Body: file,
       Bucket: bucket,
+      Body: file.buffer,
     })
     await this.s3Client.send(command)
     return `${this.endpoint}/${bucket}/${key}`
+  }
+
+  async removeFile(key: string, bucket: BucketType): Promise<void> {
+    const command = new DeleteObjectCommand({
+      Key: key,
+      Bucket: bucket,
+    })
+    await this.s3Client.send(command)
   }
 }
