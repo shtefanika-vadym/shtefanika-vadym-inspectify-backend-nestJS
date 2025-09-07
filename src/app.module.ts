@@ -5,6 +5,8 @@ import { ThrottlerModule } from '@nestjs/throttler'
 
 import { AppController } from '@/app.controller'
 import { ImageModule } from '@/image/image.module'
+import { ReportModule } from '@/report/report.module'
+import { TemplateModule } from '@/template/template.module'
 
 import { ThrottlerBehindProxyGuard } from '@/common/guards/throttler-behind-proxy.guard'
 import { ZodValidationPipe } from '@/common/pipes/zod-validation.pipe'
@@ -28,6 +30,8 @@ import { UserModule } from '@/user/user.module'
     AuthModule,
     UserModule,
     ImageModule,
+    ReportModule,
+    TemplateModule,
   ],
   providers: [
     {

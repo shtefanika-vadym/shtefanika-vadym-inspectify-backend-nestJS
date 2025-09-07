@@ -31,6 +31,10 @@ module.exports = {
             group: ['.*', './.*', '../*'],
             message: 'Use absolute imports instead',
           },
+          {
+            group: ['src/*'],
+            message: 'Use @ alias for src/ imports.',
+          },
         ],
       },
     ],
@@ -47,6 +51,8 @@ module.exports = {
           '/schemas/',
           '/auth/',
           '/user/',
+          '/template/',
+          '/report/',
           ['parent', 'sibling', 'index', 'absolute'],
         ],
         alphabetize: {

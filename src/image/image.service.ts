@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common'
 
 import type { UploadImageDto } from '@/image/dto/upload-image.dto'
 
+import type { SuccessResponseDto } from '@/common/dto/success-response.dto'
 import { R2Service } from '@/common/services/r2.service'
-import type { SuccessResponseType } from '@/common/types/success-response.type'
 
 @Injectable()
 export class ImageService {
@@ -13,7 +13,7 @@ export class ImageService {
     return this.r2Service.uploadFile(userId, file as Express.Multer.File, 'images')
   }
 
-  async removeImage(key: string): Promise<SuccessResponseType> {
+  async removeImage(key: string): Promise<SuccessResponseDto> {
     await this.r2Service.removeFile(key, 'images')
 
     return { success: true }

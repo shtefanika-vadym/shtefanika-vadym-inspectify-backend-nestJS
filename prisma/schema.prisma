@@ -22,6 +22,7 @@ model User {
   created_at   DateTime   @default(now()) @map("created_at")
   updated_at   DateTime   @updatedAt @map("updated_at")
   templates    Template[]
+  reports      Report[]
 
   @@index([email], name: "users_email_idx")
   @@map("users")
@@ -38,7 +39,6 @@ model Template {
   userId          String         @map("user_id")
   fileUrl         String         @map("file_url")
   templateContent String         @map("template_content")
-  categories      Json           @map("categories")
   status          TemplateStatus @map("status")
   createdAt       DateTime       @default(now()) @map("created_at")
   updatedAt       DateTime       @updatedAt @map("updated_at")
@@ -46,7 +46,77 @@ model Template {
   name            String         @map("name")
   deletedAt       DateTime?      @map("deleted_at")
 
-  user User @relation(fields: [userId], references: [id])
+  user       User       @relation(fields: [userId], references: [id])
+  reports    Report[]
+  categories Category[]
 
   @@map("templates")
+}
+
+model Category {
+  id         String           @id @default(uuid())
+  title      String           @map("title")
+  templateId String           @map("template_id")
+  questions  Question[]
+  template   Template         @relation(fields: [templateId], references: [id])
+  reports    CategoryReport[]
+
+  @@map("categories")
+}
+
+enum QuestionType {
+  input
+  number
+  boolean
+}
+
+model Question {
+  id         String       @id @default(uuid())
+  categoryId String       @map("category_id")
+  question   String       @map("question")
+  type       QuestionType @map("type")
+  category   Category     @relation(fields: [categoryId], references: [id])
+  answers    Answer[]
+
+  @@map("questions")
+}
+
+model CategoryReport {
+  id         String   @id @default(uuid())
+  reportId   String   @map("report_id")
+  categoryId String   @map("category_id")
+  images     String[] @map("images")
+  comment    String?  @map("comment")
+  report     Report   @relation(fields: [reportId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+  answers    Answer[]
+
+  @@map("category_reports")
+}
+
+model Answer {
+  id               String         @id @default(uuid())
+  categoryReportId String         @map("category_report_id")
+  questionId       String         @map("question_id")
+  value            String         @map("value")
+  report           CategoryReport @relation(fields: [categoryReportId], references: [id])
+  question         Question       @relation(fields: [questionId], references: [id])
+
+  @@map("answers")
+}
+
+model Report {
+  id         String           @id @default(uuid()) @map("id")
+  userId     String           @map("user_id")
+  templateId String           @map("template_id")
+  name       String           @map("name")
+  location   String           @map("location")
+  createdAt  DateTime         @default(now()) @map("created_at")
+  updatedAt  DateTime         @updatedAt @map("updated_at")
+  deletedAt  DateTime?        @map("deleted_at")
+  user       User             @relation(fields: [userId], references: [id])
+  template   Template         @relation(fields: [templateId], references: [id])
+  reports    CategoryReport[]
+
+  @@map("reports")
 }

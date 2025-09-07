@@ -1,32 +1,8 @@
-import {
-  Controller,
-  Get,
-  HttpStatus,
-  UseGuards,
-  Post,
-  UploadedFile,
-  UseInterceptors,
-  Delete,
-  Param,
-} from '@nestjs/common'
+import { Controller, Get, HttpStatus, UseGuards } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
-import { FileInterceptor } from '@nestjs/platform-express'
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-  ApiConsumes,
-  ApiBody,
-} from '@nestjs/swagger'
-
-import type { Template } from 'generated/prisma'
-
-import type { SuccessResponseType } from '@/common/types/success-response.type'
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { CreateUserDto, UserResponseType } from '@/user/dto/create-user.dto'
-import { TemplateResponseDto } from '@/user/dto/template-response.dto'
-import { UploadTemplateDto } from '@/user/dto/upload-template.dto'
 import { User } from '@/user/user.decorator'
 import { UserService } from '@/user/user.service'
 
@@ -46,64 +22,5 @@ export class UserController {
   })
   async getProfile(@User() user: UserResponseType) {
     return this.userService.getUserEntityById(user.id)
-  }
-
-  @Post('templates/upload')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Upload a template (xlsx/csv)' })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Template uploaded and processed',
-  })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-        name: {
-          type: 'string',
-          description: 'Name of the template',
-        },
-      },
-      required: ['file', 'name'],
-    },
-  })
-  @UseInterceptors(FileInterceptor('file'))
-  async uploadTemplate(
-    @User() user: UserResponseType,
-    @UploadedFile() file: UploadTemplateDto,
-    @Param('name') name: string,
-  ): Promise<Template> {
-    return this.userService.uploadTemplate(user.id, file, name)
-  }
-
-  @Get('templates')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Get user templates' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    type: [TemplateResponseDto],
-    description: 'List of user templates',
-  })
-  async getTemplates(@User() user: UserResponseType): Promise<TemplateResponseDto[]> {
-    return this.userService.getUserTemplates(user.id)
-  }
-
-  @Delete('templates/:templateId')
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Remove a user template' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Template removed successfully',
-  })
-  async removeTemplate(
-    @User() user: UserResponseType,
-    @Param('templateId') templateId: string,
-  ): Promise<SuccessResponseType> {
-    return this.userService.removeTemplate(user.id, templateId)
   }
 }

@@ -22,7 +22,7 @@ import {
 import { UploadImageDto } from '@/image/dto/upload-image.dto'
 import { ImageService } from '@/image/image.service'
 
-import type { SuccessResponseType } from '@/common/types/success-response.type'
+import { SuccessResponseDto } from '@/common/dto/success-response.dto'
 
 import { UserResponseType } from '@/user/dto/create-user.dto'
 import { User } from '@/user/user.decorator'
@@ -66,9 +66,10 @@ export class ImageController {
   @ApiOperation({ summary: 'Remove an image' })
   @ApiResponse({
     status: HttpStatus.OK,
+    type: SuccessResponseDto,
     description: 'Image removed successfully',
   })
-  async removeImage(@Param('key') key: string): Promise<SuccessResponseType> {
+  async removeImage(@Param('key') key: string): Promise<SuccessResponseDto> {
     return this.imageService.removeImage(key)
   }
 }
