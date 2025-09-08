@@ -44,22 +44,19 @@ model Template {
   updatedAt       DateTime       @updatedAt @map("updated_at")
   md5Hash         String         @map("md5_hash")
   name            String         @map("name")
-  deletedAt       DateTime?      @map("deleted_at")
 
-  user       User       @relation(fields: [userId], references: [id])
-  reports    Report[]
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   categories Category[]
 
   @@map("templates")
 }
 
 model Category {
-  id         String           @id @default(uuid())
-  title      String           @map("title")
-  templateId String           @map("template_id")
+  id         String     @id @default(uuid())
+  title      String     @map("title")
+  templateId String     @map("template_id")
   questions  Question[]
-  template   Template         @relation(fields: [templateId], references: [id])
-  reports    CategoryReport[]
+  template   Template   @relation(fields: [templateId], references: [id], onDelete: Cascade)
 
   @@map("categories")
 }
@@ -75,48 +72,19 @@ model Question {
   categoryId String       @map("category_id")
   question   String       @map("question")
   type       QuestionType @map("type")
-  category   Category     @relation(fields: [categoryId], references: [id])
-  answers    Answer[]
+  category   Category     @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@map("questions")
 }
 
-model CategoryReport {
-  id         String   @id @default(uuid())
-  reportId   String   @map("report_id")
-  categoryId String   @map("category_id")
-  images     String[] @map("images")
-  comment    String?  @map("comment")
-  report     Report   @relation(fields: [reportId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
-  answers    Answer[]
-
-  @@map("category_reports")
-}
-
-model Answer {
-  id               String         @id @default(uuid())
-  categoryReportId String         @map("category_report_id")
-  questionId       String         @map("question_id")
-  value            String         @map("value")
-  report           CategoryReport @relation(fields: [categoryReportId], references: [id])
-  question         Question       @relation(fields: [questionId], references: [id])
-
-  @@map("answers")
-}
-
 model Report {
-  id         String           @id @default(uuid()) @map("id")
-  userId     String           @map("user_id")
-  templateId String           @map("template_id")
-  name       String           @map("name")
-  location   String           @map("location")
-  createdAt  DateTime         @default(now()) @map("created_at")
-  updatedAt  DateTime         @updatedAt @map("updated_at")
-  deletedAt  DateTime?        @map("deleted_at")
-  user       User             @relation(fields: [userId], references: [id])
-  template   Template         @relation(fields: [templateId], references: [id])
-  reports    CategoryReport[]
+  id         String   @id @default(uuid()) @map("id")
+  userId     String   @map("user_id")
+  name       String   @map("name")
+  location   String   @map("location")
+  createdAt  DateTime @default(now()) @map("created_at")
+  categories Json     @map("categories")
+  user       User     @relation(fields: [userId], references: [id])
 
   @@map("reports")
 }

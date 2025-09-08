@@ -1,11 +1,10 @@
 import { createZodDto } from 'nestjs-zod'
 import { z } from 'zod'
 
-export const ReportResponseSchema = z.object({
+import { CreateReportSchema } from '@/report/dto/create-report.dto'
+
+export const ReportResponseSchema = CreateReportSchema.omit({ categories: true }).extend({
   id: z.string().uuid(),
-  templateId: z.string().uuid(),
-  name: z.string(),
-  location: z.string(),
   createdAt: z.date(),
 })
 

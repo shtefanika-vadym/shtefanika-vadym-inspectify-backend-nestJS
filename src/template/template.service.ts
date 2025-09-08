@@ -146,7 +146,7 @@ export class TemplateService {
 
   public async getUserTemplates(userId: string): Promise<TemplateResponseDto[]> {
     return this.prisma.template.findMany({
-      where: { userId, deletedAt: null },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
@@ -154,19 +154,20 @@ export class TemplateService {
         status: true,
         fileUrl: true,
         createdAt: true,
-        categories: {
-          select: {
-            id: true,
-            title: true,
-            questions: {
-              select: {
-                id: true,
-                type: true,
-                question: true,
-              },
-            },
-          },
-        },
+        categories: true,
+        // categories: {
+        //   select: {
+        //     id: true,
+        //     title: true,
+        //     questions: {
+        //       select: {
+        //         id: true,
+        //         type: true,
+        //         question: true,
+        //       },
+        //     },
+        //   },
+        // },
       },
     })
   }
@@ -177,9 +178,8 @@ export class TemplateService {
     })
     if (!template || template.userId !== userId) throw new NotFoundException('Template not found')
 
-    await this.prisma.template.update({
+    await this.prisma.template.delete({
       where: { id: templateId },
-      data: { deletedAt: new Date() },
     })
 
     return { success: true }
