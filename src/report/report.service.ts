@@ -1,4 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
+
+import { SubscriptionService } from '@/subscription/subscription.service'
 
 import type { SuccessResponseDto } from '@/common/dto/success-response.dto'
 import { PrismaService } from '@/common/services/prisma.service'
@@ -9,9 +11,15 @@ import type { ReportResponseDto } from '@/report/dto/report-response.dto'
 
 @Injectable()
 export class ReportService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly subscriptionService: SubscriptionService,
+  ) {}
 
   async createReport(userId: string, dto: CreateReportDto): Promise<SuccessResponseDto> {
+    const isActive = await this.subscriptionService.hasUserActiveSubscription(userId)
+    if (!isActive) throw new ForbiddenException('Subscription required to generate reports.')
+
     await this.prisma.report.create({
       data: {
         userId,

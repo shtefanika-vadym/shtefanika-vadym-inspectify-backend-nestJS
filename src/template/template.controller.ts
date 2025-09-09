@@ -10,6 +10,7 @@ import {
   Param,
   Body,
   Patch,
+  ForbiddenException,
 } from '@nestjs/common'
 import { AuthGuard } from '@nestjs/passport'
 import { FileInterceptor } from '@nestjs/platform-express'

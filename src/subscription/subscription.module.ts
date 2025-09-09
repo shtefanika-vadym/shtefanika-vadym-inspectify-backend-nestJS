@@ -1,18 +1,16 @@
 import { Module } from '@nestjs/common'
 import { PassportModule } from '@nestjs/passport'
 
+import { SubscriptionController } from '@/subscription/subscription.controller'
 import { SubscriptionService } from '@/subscription/subscription.service'
 
 import { PrismaService } from '@/common/services/prisma.service'
 import { StripeService } from '@/common/services/stripe.service'
 
-import { ReportController } from '@/report/report.controller'
-import { ReportService } from '@/report/report.service'
-
 @Module({
   imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
-  controllers: [ReportController],
-  providers: [ReportService, PrismaService, SubscriptionService, StripeService],
-  exports: [ReportService],
+  providers: [PrismaService, StripeService, SubscriptionService],
+  exports: [SubscriptionService],
+  controllers: [SubscriptionController],
 })
-export class ReportModule {}
+export class SubscriptionModule {}

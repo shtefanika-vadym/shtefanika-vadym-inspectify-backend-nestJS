@@ -15,14 +15,16 @@ datasource db {
 }
 
 model User {
-  id           String     @id @default(uuid()) @map("id")
-  name         String     @map("name")
-  email        String     @unique @map("email")
-  passwordHash String     @map("password_hash")
-  created_at   DateTime   @default(now()) @map("created_at")
-  updated_at   DateTime   @updatedAt @map("updated_at")
-  templates    Template[]
-  reports      Report[]
+  id                   String     @id @default(uuid()) @map("id")
+  name                 String     @map("name")
+  email                String     @unique @map("email")
+  passwordHash         String     @map("password_hash")
+  created_at           DateTime   @default(now()) @map("created_at")
+  updated_at           DateTime   @updatedAt @map("updated_at")
+  templates            Template[]
+  reports              Report[]
+  stripeCustomerId     String?    @map("stripe_customer_id")
+  stripeSubscriptionId String?    @map("stripe_subscription_id")
 
   @@index([email], name: "users_email_idx")
   @@map("users")

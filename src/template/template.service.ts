@@ -1,5 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common'
 
+import { SubscriptionService } from '@/subscription/subscription.service'
 import type { Prisma } from '@prisma/client'
 
 import type { Template, Category } from 'generated/prisma'
@@ -26,6 +27,7 @@ export class TemplateService {
     private readonly fileReadService: FileReadService,
     private readonly openAIService: OpenAIService,
     private readonly md5Service: Md5Service,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   public async uploadTemplate(
@@ -33,6 +35,9 @@ export class TemplateService {
     file: UploadTemplateDto,
     name: string,
   ): Promise<SuccessResponseDto> {
+    const isActive = await this.subscriptionService.hasUserActiveSubscription(userId)
+    if (!isActive) throw new ForbiddenException('Subscription required to upload templates.')
+
     const fileUrl = await this.r2Service.uploadFile(
       userId,
       file as Express.Multer.File,
