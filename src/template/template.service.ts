@@ -159,20 +159,19 @@ export class TemplateService {
         status: true,
         fileUrl: true,
         createdAt: true,
-        categories: true,
-        // categories: {
-        //   select: {
-        //     id: true,
-        //     title: true,
-        //     questions: {
-        //       select: {
-        //         id: true,
-        //         type: true,
-        //         question: true,
-        //       },
-        //     },
-        //   },
-        // },
+        categories: {
+          select: {
+            id: true,
+            title: true,
+            questions: {
+              select: {
+                id: true,
+                type: true,
+                question: true,
+              },
+            },
+          },
+        },
       },
     })
   }
