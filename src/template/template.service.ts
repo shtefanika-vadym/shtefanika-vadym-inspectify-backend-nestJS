@@ -13,7 +13,7 @@ import { OpenAIService } from '@/common/services/openai.service'
 import { PrismaService } from '@/common/services/prisma.service'
 import { R2Service } from '@/common/services/r2.service'
 
-import type { TemplateResponseDto } from '@/template/dto/template-response.dto'
+import { TemplateResponseDto } from '@/template/dto/template-response.dto'
 import type { UpdateCategoryTitleDto } from '@/template/dto/update-category-title.dto'
 import type { UpdateQuestionDto } from '@/template/dto/update-question.dto'
 import type { UploadTemplateDto } from '@/template/dto/upload-template.dto'
@@ -159,6 +159,23 @@ export class TemplateService {
         status: true,
         fileUrl: true,
         createdAt: true,
+        categories: true,
+      },
+    })
+  }
+
+  public async getUserTemplateById(
+    userId: string,
+    templateId: string,
+  ): Promise<TemplateResponseDto> {
+    const template = await this.prisma.template.findUnique({
+      where: { id: templateId, userId: userId },
+      select: {
+        id: true,
+        name: true,
+        status: true,
+        fileUrl: true,
+        createdAt: true,
         categories: {
           select: {
             id: true,
@@ -174,13 +191,16 @@ export class TemplateService {
         },
       },
     })
+    if (!template) throw new NotFoundException('Template not found')
+
+    return template
   }
 
   public async removeTemplate(userId: string, templateId: string): Promise<SuccessResponseDto> {
     const template = await this.prisma.template.findUnique({
-      where: { id: templateId },
+      where: { id: templateId, userId: userId },
     })
-    if (!template || template.userId !== userId) throw new NotFoundException('Template not found')
+    if (!template) throw new NotFoundException('Template not found')
 
     await this.prisma.template.delete({
       where: { id: templateId },

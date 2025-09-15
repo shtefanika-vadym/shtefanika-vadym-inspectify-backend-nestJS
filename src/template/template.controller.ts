@@ -86,6 +86,21 @@ export class TemplateController {
     return this.templateService.getUserTemplates(user.id)
   }
 
+  @Get(':templateId')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get a user template' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: TemplateResponseDto,
+    description: 'Template received successfully',
+  })
+  async getTemplateById(
+    @User() user: UserResponseType,
+    @Param('templateId') templateId: string,
+  ): Promise<UserResponseType> {
+    return this.templateService.getUserTemplateById(user.id, templateId)
+  }
+
   @Delete(':templateId')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Remove a user template' })
